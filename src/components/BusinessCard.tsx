@@ -23,7 +23,7 @@ interface BusinessCardProps {
   specialties: string[];
   skills: string[];
   services: string[];
-  ctaButtons: Array<{ text: string; link: string; color: string }>;
+  ctaButtons: Array<{ text: string; link: string; color: string; enabled: boolean }>;
   otherLinks: Array<{ title: string; url: string }>;
   experiences: Array<{
     jobTitle: string;
@@ -40,6 +40,11 @@ interface BusinessCardProps {
     graduationDate: string;
     achievements: string;
   }>;
+  displaySections: {
+    specialties: boolean;
+    skills: boolean;
+    services: boolean;
+  };
   currentSide: number;
   enabledSides: number[];
 }
