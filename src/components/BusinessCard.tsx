@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/card";
-import { Twitter, Linkedin, MessageCircle, Send, Video } from "lucide-react";
+import { Twitter, Linkedin, MessageCircle, Send, Video, Plus } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface BusinessCardProps {
   profilePic: string;
@@ -16,8 +17,11 @@ interface BusinessCardProps {
   whatsapp: string;
   telegram: string;
   tiktok: string;
-  specialties: string;
-  services: string;
+  specialties: string[];
+  skills: string[];
+  services: string[];
+  ctaButtons: Array<{ text: string; link: string; color: string }>;
+  otherLinks: Array<{ title: string; url: string }>;
   currentSide: number;
 }
 
@@ -36,8 +40,11 @@ export default function BusinessCard({
   whatsapp = "",
   telegram = "",
   tiktok = "",
-  specialties = "",
-  services = "",
+  specialties = [],
+  skills = [],
+  services = [],
+  ctaButtons = [],
+  otherLinks = [],
   currentSide = 0
 }: BusinessCardProps) {
   const renderSide1 = () => (
@@ -59,11 +66,25 @@ export default function BusinessCard({
         {email && <p className="text-gray-600">{email}</p>}
         {phone && <p className="text-gray-600">{phone}</p>}
       </div>
+      <div className="flex gap-2">
+        {ctaButtons.map((button, index) => (
+          <a
+            key={index}
+            href={button.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`px-4 py-2 rounded-md text-white text-sm font-medium transition-colors ${button.color}`}
+          >
+            {button.text}
+          </a>
+        ))}
+      </div>
     </div>
   );
 
   const renderSide2 = () => (
     <div className="space-y-4">
+      <h3 className="text-lg font-semibold text-indigo-600">Links</h3>
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           {website && (
@@ -105,18 +126,56 @@ export default function BusinessCard({
           )}
         </div>
       </div>
+      {otherLinks.length > 0 && (
+        <div className="mt-4">
+          <h4 className="text-md font-semibold text-gray-700 mb-2">Other Links</h4>
+          <div className="space-y-2">
+            {otherLinks.map((link, index) => (
+              <div key={index} className="flex items-center gap-2 text-gray-600 text-sm">
+                <span>🔗</span>
+                <a href={link.url} target="_blank" rel="noopener noreferrer" className="hover:text-indigo-600">
+                  {link.title}
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 
   const renderSide3 = () => (
     <div className="space-y-4">
+      <h3 className="text-lg font-semibold text-indigo-600">Professional Details</h3>
       <div>
-        <h3 className="text-lg font-semibold text-indigo-600 mb-2">Specialties & Interests</h3>
-        <p className="text-gray-600 text-sm whitespace-pre-line">{specialties}</p>
+        <h4 className="text-md font-semibold text-gray-700 mb-2">Specialties & Interests</h4>
+        <div className="flex flex-wrap gap-2">
+          {specialties.map((specialty, index) => (
+            <Badge key={index} variant="secondary" className="bg-gray-100 text-gray-800">
+              {specialty}
+            </Badge>
+          ))}
+        </div>
       </div>
       <div>
-        <h3 className="text-lg font-semibold text-indigo-600 mb-2">Products & Services</h3>
-        <p className="text-gray-600 text-sm whitespace-pre-line">{services}</p>
+        <h4 className="text-md font-semibold text-gray-700 mb-2">Skills</h4>
+        <div className="flex flex-wrap gap-2">
+          {skills.map((skill, index) => (
+            <Badge key={index} variant="secondary" className="bg-gray-100 text-gray-800">
+              {skill}
+            </Badge>
+          ))}
+        </div>
+      </div>
+      <div>
+        <h4 className="text-md font-semibold text-gray-700 mb-2">Products & Services</h4>
+        <div className="flex flex-wrap gap-2">
+          {services.map((service, index) => (
+            <Badge key={index} variant="secondary" className="bg-gray-100 text-gray-800">
+              {service}
+            </Badge>
+          ))}
+        </div>
       </div>
     </div>
   );
