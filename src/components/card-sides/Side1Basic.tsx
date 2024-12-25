@@ -8,7 +8,7 @@ interface Side1Props {
   email: string;
   phone: string;
   tagline: string;
-  ctaButtons: Array<{ text: string; link: string; color: string }>;
+  ctaButtons: Array<{ text: string; link: string; color: string; enabled: boolean }>;
 }
 
 export default function Side1Basic({
@@ -41,7 +41,7 @@ export default function Side1Basic({
         {phone && <p className="text-gray-600">{phone}</p>}
       </div>
       <div className="flex gap-2">
-        {ctaButtons.map((button, index) => (
+        {ctaButtons.filter(button => button.enabled).map((button, index) => (
           <a
             key={index}
             href={button.link}

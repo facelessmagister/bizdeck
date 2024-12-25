@@ -2,6 +2,7 @@ import { toPng } from "html-to-image";
 import { jsPDF } from "jspdf";
 import vCard from "vcf";
 import { toast } from "sonner";
+import { exportAsHTML } from "../utils/htmlExport";
 
 interface ExportUtilsProps {
   formData: any;
@@ -104,3 +105,5 @@ export const exportAsPDF = async ({ formData, setCurrentSide, enabledSides = [0,
     toast.error("Failed to export PDF");
   }
 };
+
+export { exportAsHTML };

@@ -16,7 +16,7 @@ export interface FormData {
   specialties: string[];
   skills: string[];
   services: string[];
-  ctaButtons: Array<{ text: string; link: string; color: string }>;
+  ctaButtons: Array<{ text: string; link: string; color: string; enabled: boolean }>;
   otherLinks: Array<{ title: string; url: string }>;
   experiences: Array<{
     jobTitle: string;
@@ -33,4 +33,9 @@ export interface FormData {
     graduationDate: string;
     achievements: string;
   }>;
+  displaySections: {
+    specialties: boolean;
+    skills: boolean;
+    services: boolean;
+  };
 }

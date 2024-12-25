@@ -6,14 +6,14 @@ import { QRCodeSVG } from "qrcode.react";
 import BusinessCard from "./BusinessCard";
 import { Download, Share2, ChevronLeft, ChevronRight, Plus, X } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import { exportAsImage, exportAsVCard, exportAsPDF } from "./ExportUtils";
+import { exportAsImage, exportAsVCard, exportAsPDF, exportAsHTML } from "./ExportUtils";
 import { Badge } from "./ui/badge";
 import { formFields } from "./editor/formFields";
 import { FormData } from "@/types/formTypes";
 
 export default function CardEditor() {
   const [currentSide, setCurrentSide] = useState(0);
-  const [enabledSides, setEnabledSides] = useState([0, 1, 2]); // Default enabled sides
+  const [enabledSides, setEnabledSides] = useState([0, 1, 2]);
   const [formData, setFormData] = useState<FormData>({
     profilePic: "",
     name: "",
@@ -33,9 +33,9 @@ export default function CardEditor() {
     skills: [] as string[],
     services: [] as string[],
     ctaButtons: [
-      { text: "", link: "", color: "bg-blue-500 hover:bg-blue-600" },
-      { text: "", link: "", color: "bg-purple-500 hover:bg-purple-600" },
-      { text: "", link: "", color: "bg-orange-500 hover:bg-orange-600" },
+      { text: "", link: "", color: "bg-blue-500 hover:bg-blue-600", enabled: true },
+      { text: "", link: "", color: "bg-purple-500 hover:bg-purple-600", enabled: false },
+      { text: "", link: "", color: "bg-orange-500 hover:bg-orange-600", enabled: false },
     ],
     otherLinks: [] as Array<{ title: string; url: string }>,
     experiences: [] as Array<{
@@ -53,6 +53,11 @@ export default function CardEditor() {
       graduationDate: string;
       achievements: string;
     }>,
+    displaySections: {
+      specialties: true,
+      skills: true,
+      services: true,
+    }
   });
 
   const [newTag, setNewTag] = useState({ type: "", value: "" });
@@ -195,6 +200,24 @@ export default function CardEditor() {
 
   const sideNames = ["Basic Info", "Links", "Professional", "Experience", "Education"];
 
+  const handleCtaButtonToggle = (index: number) => {
+    setFormData(prev => {
+      const newButtons = [...prev.ctaButtons];
+      newButtons[index] = { ...newButtons[index], enabled: !newButtons[index].enabled };
+      return { ...prev, ctaButtons: newButtons };
+    });
+  };
+
+  const handleSectionToggle = (section: keyof typeof formData.displaySections) => {
+    setFormData(prev => ({
+      ...prev,
+      displaySections: {
+        ...prev.displaySections,
+        [section]: !prev.displaySections[section]
+      }
+    }));
+  };
+
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="flex items-center justify-between mb-8">
@@ -268,6 +291,15 @@ export default function CardEditor() {
                     <h3 className="font-semibold text-gray-700">Call to Action Buttons</h3>
                     {formData.ctaButtons.map((button, index) => (
                       <div key={index} className="grid grid-cols-2 gap-2">
+                        <div className="col-span-2 flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={button.enabled}
+                            onChange={() => handleCtaButtonToggle(index)}
+                            className="rounded border-gray-300"
+                          />
+                          <span className="text-sm text-gray-600">Enable Button {index + 1}</span>
+                        </div>
                         <Input
                           placeholder="Button Text"
                           value={button.text}
@@ -340,10 +372,24 @@ export default function CardEditor() {
 
               {currentSide === 2 && (
                 <div className="space-y-6">
+                  <div className="space-y-2">
+                    <h3 className="font-semibold text-gray-700">Display Sections</h3>
+                    {Object.entries(formData.displaySections).map(([section, enabled]) => (
+                      <div key={section} className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={enabled}
+                          onChange={() => handleSectionToggle(section as keyof typeof formData.displaySections)}
+                          className="rounded border-gray-300"
+                        />
+                        <span className="text-sm text-gray-600 capitalize">{section}</span>
+                      </div>
+                    ))}
+                  </div>
                   {["specialties", "skills", "services"].map((type) => (
                     <div key={type} className="space-y-2">
                       <Label className="capitalize text-gray-700">{type}</Label>
-                      <div className="flex gap-2">
+                      <div className="flex flex-wrap gap-2">
                         <Input
                           placeholder={`Add ${type}`}
                           value={newTag.type === type ? newTag.value : ""}
@@ -528,6 +574,13 @@ export default function CardEditor() {
                 className="flex items-center gap-2"
               >
                 <Share2 size={16} /> Export Contact
+              </Button>
+              <Button 
+                onClick={() => exportAsHTML(formData)} 
+                variant="outline" 
+                className="flex items-center gap-2"
+              >
+                <Download size={16} /> Export as HTML
               </Button>
             </div>
           </div>
