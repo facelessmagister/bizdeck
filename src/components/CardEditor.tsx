@@ -8,6 +8,7 @@ import { Download, Share2, ChevronLeft, ChevronRight, Plus, X } from "lucide-rea
 import { Textarea } from "@/components/ui/textarea";
 import { exportAsImage, exportAsVCard, exportAsPDF } from "./ExportUtils";
 import { Badge } from "./ui/badge";
+import { formFields } from "./editor/formFields";
 
 export default function CardEditor() {
   const [currentSide, setCurrentSide] = useState(0);
@@ -53,6 +54,8 @@ export default function CardEditor() {
     }>,
   });
 
+  const [newTag, setNewTag] = useState({ type: "", value: "" });
+  const [newLink, setNewLink] = useState({ title: "", url: "" });
   const [newExperience, setNewExperience] = useState({
     jobTitle: "",
     organization: "",
@@ -89,7 +92,7 @@ export default function CardEditor() {
     if (newTag.value.trim()) {
       setFormData((prev) => ({
         ...prev,
-        [type]: [...prev[type], newTag.value.trim()],
+        [type]: [...(prev[type] as string[]), newTag.value.trim()],
       }));
       setNewTag({ type: "", value: "" });
     }
