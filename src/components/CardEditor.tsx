@@ -9,11 +9,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { exportAsImage, exportAsVCard, exportAsPDF } from "./ExportUtils";
 import { Badge } from "./ui/badge";
 import { formFields } from "./editor/formFields";
+import { FormData } from "@/types/formTypes";
 
 export default function CardEditor() {
   const [currentSide, setCurrentSide] = useState(0);
   const [enabledSides, setEnabledSides] = useState([0, 1, 2]); // Default enabled sides
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     profilePic: "",
     name: "",
     title: "",
@@ -88,17 +89,17 @@ export default function CardEditor() {
     });
   };
 
-  const handleAddTag = (type: "specialties" | "skills" | "services") => {
+  const handleAddTag = (type: keyof Pick<FormData, "specialties" | "skills" | "services">) => {
     if (newTag.value.trim()) {
       setFormData((prev) => ({
         ...prev,
-        [type]: [...(prev[type] as string[]), newTag.value.trim()],
+        [type]: [...prev[type], newTag.value.trim()],
       }));
       setNewTag({ type: "", value: "" });
     }
   };
 
-  const handleRemoveTag = (type: "specialties" | "skills" | "services", index: number) => {
+  const handleRemoveTag = (type: keyof Pick<FormData, "specialties" | "skills" | "services">, index: number) => {
     setFormData((prev) => ({
       ...prev,
       [type]: prev[type].filter((_, i) => i !== index),
@@ -361,7 +362,7 @@ export default function CardEditor() {
                         </Button>
                       </div>
                       <div className="flex flex-wrap gap-2">
-                        {formData[type as keyof typeof formData].map((tag: string, index: number) => (
+                        {(formData[type as keyof Pick<FormData, "specialties" | "skills" | "services">] as string[]).map((tag: string, index: number) => (
                           <Badge
                             key={index}
                             variant="secondary"
@@ -369,7 +370,7 @@ export default function CardEditor() {
                           >
                             {tag}
                             <Button
-                              onClick={() => handleRemoveTag(type as "specialties" | "skills" | "services", index)}
+                              onClick={() => handleRemoveTag(type as keyof Pick<FormData, "specialties" | "skills" | "services">, index)}
                               variant="ghost"
                               size="sm"
                               className="h-4 w-4 p-0 text-gray-500 hover:text-red-500"
