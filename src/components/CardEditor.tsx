@@ -10,6 +10,8 @@ import { exportAsImage, exportAsVCard, exportAsPDF, exportAsHTML } from "./Expor
 import { Badge } from "./ui/badge";
 import { formFields } from "./editor/formFields";
 import { FormData } from "@/types/formTypes";
+import Header from "./layout/Header";
+import Footer from "./layout/Footer";
 
 export default function CardEditor() {
   const [currentSide, setCurrentSide] = useState(0);
@@ -220,15 +222,8 @@ export default function CardEditor() {
 
   return (
     <div className="container mx-auto py-8 px-4">
-      <div className="flex items-center justify-between mb-8">
-        <a href="/" className="flex items-center space-x-2">
-          <img src="/lovable-uploads/f873f54b-825d-46a4-b37c-ea503e9047ef.png" alt="bizel.link" className="w-12 h-12" />
-          <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-600 bg-clip-text text-transparent">
-            bizel.link
-          </span>
-        </a>
-      </div>
-
+      <Header />
+      
       <div className="grid lg:grid-cols-2 gap-8">
         <div className="space-y-6">
           <div className="bg-white/5 backdrop-blur-lg rounded-lg p-6 border border-white/10">
@@ -605,6 +600,8 @@ export default function CardEditor() {
           )}
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }
