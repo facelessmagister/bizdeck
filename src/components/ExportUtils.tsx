@@ -6,13 +6,14 @@ import { toast } from "sonner";
 interface ExportUtilsProps {
   formData: any;
   setCurrentSide: (side: number) => void;
+  enabledSides?: number[];
 }
 
-export const exportAsImage = async ({ formData, setCurrentSide }: ExportUtilsProps) => {
+export const exportAsImage = async ({ formData, setCurrentSide, enabledSides = [0, 1, 2] }: ExportUtilsProps) => {
   try {
     const sides = [];
-    for (let i = 0; i < 3; i++) {
-      setCurrentSide(i);
+    for (const sideIndex of enabledSides) {
+      setCurrentSide(sideIndex);
       // Wait for the state to update
       await new Promise(resolve => setTimeout(resolve, 100));
       const cardElement = document.getElementById("business-card");
@@ -22,7 +23,7 @@ export const exportAsImage = async ({ formData, setCurrentSide }: ExportUtilsPro
     }
     
     const canvas = document.createElement("canvas");
-    canvas.width = 1500;
+    canvas.width = sides.length * 500;
     canvas.height = 300;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
@@ -73,11 +74,11 @@ export const exportAsVCard = (formData: any) => {
   }
 };
 
-export const exportAsPDF = async ({ formData, setCurrentSide }: ExportUtilsProps) => {
+export const exportAsPDF = async ({ formData, setCurrentSide, enabledSides = [0, 1, 2] }: ExportUtilsProps) => {
   try {
     const sides = [];
-    for (let i = 0; i < 3; i++) {
-      setCurrentSide(i);
+    for (const sideIndex of enabledSides) {
+      setCurrentSide(sideIndex);
       // Wait for the state to update
       await new Promise(resolve => setTimeout(resolve, 100));
       const cardElement = document.getElementById("business-card");
@@ -89,7 +90,7 @@ export const exportAsPDF = async ({ formData, setCurrentSide }: ExportUtilsProps
     const pdf = new jsPDF({
       orientation: "landscape",
       unit: "px",
-      format: [300, 1500],
+      format: [300, sides.length * 500],
     });
 
     sides.forEach((side, index) => {

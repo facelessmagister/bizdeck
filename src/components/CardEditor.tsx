@@ -11,6 +11,7 @@ import { Badge } from "./ui/badge";
 
 export default function CardEditor() {
   const [currentSide, setCurrentSide] = useState(0);
+  const [enabledSides, setEnabledSides] = useState([0, 1, 2]); // Default enabled sides
   const [formData, setFormData] = useState({
     profilePic: "",
     name: "",
@@ -35,10 +36,39 @@ export default function CardEditor() {
       { text: "", link: "", color: "bg-orange-500 hover:bg-orange-600" },
     ],
     otherLinks: [] as Array<{ title: string; url: string }>,
+    experiences: [] as Array<{
+      jobTitle: string;
+      organization: string;
+      startDate: string;
+      endDate: string;
+      currentlyWorking: boolean;
+      responsibilities: string;
+    }>,
+    education: [] as Array<{
+      degree: string;
+      institution: string;
+      startDate: string;
+      graduationDate: string;
+      achievements: string;
+    }>,
   });
 
-  const [newTag, setNewTag] = useState({ type: "", value: "" });
-  const [newLink, setNewLink] = useState({ title: "", url: "" });
+  const [newExperience, setNewExperience] = useState({
+    jobTitle: "",
+    organization: "",
+    startDate: "",
+    endDate: "",
+    currentlyWorking: false,
+    responsibilities: "",
+  });
+
+  const [newEducation, setNewEducation] = useState({
+    degree: "",
+    institution: "",
+    startDate: "",
+    graduationDate: "",
+    achievements: "",
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData((prev) => ({
@@ -103,26 +133,63 @@ export default function CardEditor() {
     }
   };
 
-  const formFields = {
-    side1: [
-      { type: "file", name: "profilePic", label: "Profile Picture" },
-      { type: "text", name: "name", label: "Name" },
-      { type: "text", name: "title", label: "Title" },
-      { type: "text", name: "company", label: "Company" },
-      { type: "text", name: "tagline", label: "Tagline" },
-      { type: "email", name: "email", label: "Email" },
-      { type: "tel", name: "phone", label: "Phone" },
-    ],
-    side2: [
-      { type: "url", name: "website", label: "Website" },
-      { type: "text", name: "address", label: "Address" },
-      { type: "text", name: "linkedin", label: "LinkedIn" },
-      { type: "text", name: "twitter", label: "Twitter" },
-      { type: "text", name: "whatsapp", label: "WhatsApp" },
-      { type: "text", name: "telegram", label: "Telegram" },
-      { type: "text", name: "tiktok", label: "TikTok" },
-    ],
+  const handleAddExperience = () => {
+    if (newExperience.jobTitle && newExperience.organization) {
+      setFormData((prev) => ({
+        ...prev,
+        experiences: [...prev.experiences, { ...newExperience }],
+      }));
+      setNewExperience({
+        jobTitle: "",
+        organization: "",
+        startDate: "",
+        endDate: "",
+        currentlyWorking: false,
+        responsibilities: "",
+      });
+    }
   };
+
+  const handleAddEducation = () => {
+    if (newEducation.degree && newEducation.institution) {
+      setFormData((prev) => ({
+        ...prev,
+        education: [...prev.education, { ...newEducation }],
+      }));
+      setNewEducation({
+        degree: "",
+        institution: "",
+        startDate: "",
+        graduationDate: "",
+        achievements: "",
+      });
+    }
+  };
+
+  const handleRemoveExperience = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      experiences: prev.experiences.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleRemoveEducation = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      education: prev.education.filter((_, i) => i !== index),
+    }));
+  };
+
+  const toggleSide = (sideIndex: number) => {
+    setEnabledSides((prev) => {
+      if (prev.includes(sideIndex)) {
+        return prev.filter((side) => side !== sideIndex);
+      }
+      return [...prev, sideIndex].sort();
+    });
+  };
+
+  const sideNames = ["Basic Info", "Links", "Professional", "Experience", "Education"];
 
   return (
     <div className="container mx-auto py-8 px-4">
@@ -149,12 +216,28 @@ export default function CardEditor() {
                   <ChevronLeft className="w-4 h-4" />
                 </Button>
                 <Button
-                  onClick={() => setCurrentSide(prev => Math.min(2, prev + 1))}
-                  disabled={currentSide === 2}
+                  onClick={() => setCurrentSide(prev => Math.min(4, prev + 1))}
+                  disabled={currentSide === 4}
                   variant="outline"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </Button>
+              </div>
+            </div>
+
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold mb-2">Enabled Sides</h3>
+              <div className="flex flex-wrap gap-2">
+                {sideNames.map((name, index) => (
+                  <Badge
+                    key={index}
+                    variant={enabledSides.includes(index) ? "default" : "outline"}
+                    className="cursor-pointer"
+                    onClick={() => toggleSide(index)}
+                  >
+                    {name}
+                  </Badge>
+                ))}
               </div>
             </div>
 
@@ -297,6 +380,125 @@ export default function CardEditor() {
                   ))}
                 </div>
               )}
+
+              {currentSide === 3 && (
+                <div className="space-y-4">
+                  <h3 className="font-semibold text-gray-700">Work Experience</h3>
+                  <div className="grid gap-2">
+                    <Input
+                      placeholder="Job Title"
+                      value={newExperience.jobTitle}
+                      onChange={(e) => setNewExperience({ ...newExperience, jobTitle: e.target.value })}
+                    />
+                    <Input
+                      placeholder="Organization"
+                      value={newExperience.organization}
+                      onChange={(e) => setNewExperience({ ...newExperience, organization: e.target.value })}
+                    />
+                    <div className="grid grid-cols-2 gap-2">
+                      <Input
+                        type="date"
+                        placeholder="Start Date"
+                        value={newExperience.startDate}
+                        onChange={(e) => setNewExperience({ ...newExperience, startDate: e.target.value })}
+                      />
+                      <Input
+                        type="date"
+                        placeholder="End Date"
+                        value={newExperience.endDate}
+                        onChange={(e) => setNewExperience({ ...newExperience, endDate: e.target.value })}
+                        disabled={newExperience.currentlyWorking}
+                      />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={newExperience.currentlyWorking}
+                        onChange={(e) => setNewExperience({ ...newExperience, currentlyWorking: e.target.checked })}
+                      />
+                      <span className="text-sm text-gray-600">Currently Working Here</span>
+                    </div>
+                    <Textarea
+                      placeholder="Responsibilities/Accomplishments"
+                      value={newExperience.responsibilities}
+                      onChange={(e) => setNewExperience({ ...newExperience, responsibilities: e.target.value })}
+                    />
+                    <Button onClick={handleAddExperience} variant="outline">
+                      <Plus className="w-4 h-4" /> Add Experience
+                    </Button>
+                  </div>
+                  <div className="space-y-2">
+                    {formData.experiences.map((exp, index) => (
+                      <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                        <span>{exp.jobTitle} at {exp.organization}</span>
+                        <Button
+                          onClick={() => handleRemoveExperience(index)}
+                          variant="ghost"
+                          size="sm"
+                          className="text-red-500"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {currentSide === 4 && (
+                <div className="space-y-4">
+                  <h3 className="font-semibold text-gray-700">Education</h3>
+                  <div className="grid gap-2">
+                    <Input
+                      placeholder="Degree/Qualification"
+                      value={newEducation.degree}
+                      onChange={(e) => setNewEducation({ ...newEducation, degree: e.target.value })}
+                    />
+                    <Input
+                      placeholder="Institution"
+                      value={newEducation.institution}
+                      onChange={(e) => setNewEducation({ ...newEducation, institution: e.target.value })}
+                    />
+                    <div className="grid grid-cols-2 gap-2">
+                      <Input
+                        type="date"
+                        placeholder="Start Date"
+                        value={newEducation.startDate}
+                        onChange={(e) => setNewEducation({ ...newEducation, startDate: e.target.value })}
+                      />
+                      <Input
+                        type="date"
+                        placeholder="Graduation Date"
+                        value={newEducation.graduationDate}
+                        onChange={(e) => setNewEducation({ ...newEducation, graduationDate: e.target.value })}
+                      />
+                    </div>
+                    <Textarea
+                      placeholder="Achievements/Activities (Optional)"
+                      value={newEducation.achievements}
+                      onChange={(e) => setNewEducation({ ...newEducation, achievements: e.target.value })}
+                    />
+                    <Button onClick={handleAddEducation} variant="outline">
+                      <Plus className="w-4 h-4" /> Add Education
+                    </Button>
+                  </div>
+                  <div className="space-y-2">
+                    {formData.education.map((edu, index) => (
+                      <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                        <span>{edu.degree} at {edu.institution}</span>
+                        <Button
+                          onClick={() => handleRemoveEducation(index)}
+                          variant="ghost"
+                          size="sm"
+                          className="text-red-500"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -304,13 +506,13 @@ export default function CardEditor() {
             <h3 className="text-xl font-semibold text-gray-800 mb-4">Export Options</h3>
             <div className="flex flex-wrap gap-3">
               <Button 
-                onClick={() => exportAsImage({ formData, setCurrentSide })} 
+                onClick={() => exportAsImage({ formData, setCurrentSide, enabledSides })} 
                 className="flex items-center gap-2"
               >
                 <Download size={16} /> Export as Image
               </Button>
               <Button 
-                onClick={() => exportAsPDF({ formData, setCurrentSide })} 
+                onClick={() => exportAsPDF({ formData, setCurrentSide, enabledSides })} 
                 variant="secondary" 
                 className="flex items-center gap-2"
               >
@@ -329,7 +531,7 @@ export default function CardEditor() {
 
         <div className="lg:sticky lg:top-8 space-y-6">
           <div id="business-card" className="w-full">
-            <BusinessCard {...formData} currentSide={currentSide} />
+            <BusinessCard {...formData} currentSide={currentSide} enabledSides={enabledSides} />
           </div>
           
           {currentSide === 1 && (
