@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Download, Share2 } from "lucide-react";
-import { exportAsImage, exportAsVCard, exportAsPDF, exportAsHTML } from "../ExportUtils";
+import { exportAsImage, exportAsVCard, exportAsPDF, exportAsHTML } from "@/utils/exports";
 import { FormData } from "@/types/formTypes";
 
 interface EditorExportOptionsProps {
