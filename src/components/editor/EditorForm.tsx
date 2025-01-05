@@ -23,7 +23,7 @@ interface EditorFormProps {
   handleRemoveEducation: (index: number) => void;
   handleCtaButtonChange: (index: number, field: "text" | "link", value: string) => void;
   handleCtaButtonToggle: (index: number) => void;
-  handleSectionToggle: (section: keyof typeof formData.displaySections) => void;
+  handleSectionToggle: (section: keyof FormData['displaySections']) => void;
 }
 
 export default function EditorForm({
