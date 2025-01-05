@@ -69,7 +69,6 @@ export default function Hero() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Header */}
       <header className="flex items-center justify-between px-6 py-4 bg-white/5 backdrop-blur-lg border-b border-white/10">
         <a href="/" className="flex items-center space-x-2">
           <img 
@@ -83,7 +82,6 @@ export default function Hero() {
         </a>
       </header>
 
-      {/* Hero Section */}
       <div className="flex-1">
         <div className="flex flex-col items-center justify-center px-4 py-16 animate-fade-up">
           <h1 className="text-4xl md:text-6xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600 mb-6 max-w-4xl">
